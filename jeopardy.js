@@ -29,7 +29,7 @@ let columns = {};
 let categoryData = {};
 
 async function getCategoryIds() {
-  const res = await axios.get('http://jservice.io/api/categories', { params: { count: 100 } });
+  const res = await axios.get('https://jservice.io/api/categories', { params: { count: 100 } });
   let arrayOfIds = [];
   for (let i = 0; i < 6; i++){
     let randomIndex = Math.floor(Math.random() * 101);
@@ -125,7 +125,7 @@ async function populateCategoryData(idArray) {
   
   for (let i = 0; i < 6; i++){
     console.log(i)
-    const res = await axios.get(`http://jservice.io/api/category?id=${idArray[i]}`);
+    const res = await axios.get(`https://jservice.io/api/category?id=${idArray[i]}`);
       const fiveCluesArr = res.data.clues.slice(0, 5);
       const category = {
         'title': res.data.title,
