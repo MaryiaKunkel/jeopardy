@@ -28,20 +28,88 @@ let columns = {};
  */
 let categoryData = {};
 
-async function getCategoryIds() {
-  const NUM_CATEGORIES = 6; // You can adjust this value to get more or fewer categories
-  let categoryIds = [];
-  for (let i = 0; i < NUM_CATEGORIES; i++){
-    const res = await axios.get('http://jservice.io/api/random');
-    const categoryId = res.data[0].category_id;
-    if (!categoryData[categoryId]) {
-      categoryData[categoryId] = await getCategory(categoryId);
+// async function getCategoryIds() {
+//   const NUM_CATEGORIES = 6; // You can adjust this value to get more or fewer categories
+//   let categoryIds = [];
+//   const res = await axios.get('http://jservice.io/api/random', { params: { count: 6 } });
+//   for (let i = 0; i < NUM_CATEGORIES; i++){
+//     // const res = await axios.get('http://jservice.io/api/random');
+//     const categoryId = res.data[i].category_id;
+//     if (!categoryData[categoryId]) {
+//       categoryData[categoryId] = await getCategory(categoryId);
+//     }
+//     categoryIds.push(categoryId);
+//   };
+//   console.log(categoryIds);
+//   return categoryIds;
+// }
+
+function randomApi() {
+  return [
+    {
+      title: "Math",
+      clues: [
+        { question: "2+2", answer: 4, showing: null },
+        { question: "1+1", answer: 2, showing: null },
+        { question: "3+3", answer: 6, showing: null },
+        { question: "4+4", answer: 8, showing: null },
+        { question: "5+5", answer: 10, showing: null }
+      ],
+    },
+    {
+      title: "Literature",
+      clues: [
+        { question: "Hamlet Author", answer: "Shakespeare", showing: null },
+        { question: "Bell Jar Author", answer: "Plath", showing: null },
+        { question: "Pride and Prejudice Author", answer: "Austen", showing: null },
+        { question: "1984 Author", answer: "Orwell", showing: null },
+        { question: "To Kill a Mockingbird Author", answer: "Lee", showing: null }
+      ],
+    },
+    {
+      title: "History",
+      clues: [
+        { question: "Year of American Independence", answer: 1776, showing: null },
+        { question: "Capital of France", answer: "Paris", showing: null },
+        { question: "First President of the United States", answer: "Washington", showing: null },
+        { question: "World War II End Year", answer: 1945, showing: null },
+        { question: "Ancient Egyptian Pharaoh", answer: "Cleopatra", showing: null }
+      ],
+    },
+    {
+      title: "Science",
+      clues: [
+        { question: "Chemical Symbol for Water", answer: "H2O", showing: null },
+        { question: "Newton's First Law of Motion", answer: "Inertia", showing: null },
+        { question: "Earth's Largest Satellite", answer: "Moon", showing: null },
+        { question: "Lightest Element", answer: "Hydrogen", showing: null },
+        { question: "Study of Fossils", answer: "Paleontology", showing: null }
+      ],
+    },
+    {
+      title: "Geography",
+      clues: [
+        { question: "Largest Ocean", answer: "Pacific Ocean", showing: null },
+        { question: "Longest River", answer: "Nile", showing: null },
+        { question: "Country with the Largest Population", answer: "China", showing: null },
+        { question: "Capital of Japan", answer: "Tokyo", showing: null },
+        { question: "Mount Everest Location", answer: "Nepal", showing: null }
+      ],
+    },
+    {
+      title: "Art",
+      clues: [
+        { question: "Mona Lisa Painter", answer: "Da Vinci", showing: null },
+        { question: "Sistine Chapel Ceiling Painter", answer: "Michelangelo", showing: null },
+        { question: "Famous Spanish Surrealist Painter", answer: "Dali", showing: null },
+        { question: "Starry Night Painter", answer: "Van Gogh", showing: null },
+        { question: "Birth of Venus Painter", answer: "Botticelli", showing: null }
+      ],
     }
-    categoryIds.push(categoryId);
-  };
-  console.log(categoryIds);
-  return categoryIds;
+  ];
 }
+
+
 // getCategoryIds()
 /** Return object with data about a category:
  *
@@ -55,24 +123,24 @@ async function getCategoryIds() {
  *   ]
  */
 
-async function getCategory(catId) {
-  if (categoryData[catId]) {
-    return categoryData[catId];
-  } else {
-    const res = await axios.get(`http://jservice.io/api/category?id=${catId}`);
-    const fiveCluesArr = res.data.clues.slice(0, 5);
-    const category = {
-      'title': res.data.title,
-      'clues': fiveCluesArr.map((clue) => ({
-        'question': clue.question,
-        'answer': clue.answer,
-        'showing': null,
-      })),
-    };
-    categoryData[catId] = category;
-    return category;
-  }
-}
+// async function getCategory(catId) {
+//   if (categoryData[catId]) {
+//     return categoryData[catId];
+//   } else {
+//     const res = await axios.get(`http://jservice.io/api/category?id=${catId}`);
+//     const fiveCluesArr = res.data.clues.slice(0, 5);
+//     const category = {
+//       'title': res.data.title,
+//       'clues': fiveCluesArr.map((clue) => ({
+//         'question': clue.question,
+//         'answer': clue.answer,
+//         'showing': null,
+//       })),
+//     };
+//     categoryData[catId] = category;
+//     return category;
+//   }
+// }
 
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
  *
@@ -81,28 +149,27 @@ async function getCategory(catId) {
  *   each with a question for each category in a <td>
  *   (initally, just show a "?" where the question/answer would go.)
  */
-console.log(categoryData)
+// console.log(categoryData)
+let categoryIds = [];
 
 async function fillTable() {
   const $table = $('<table>');
   const $thead = $('<thead>');
   const $tbody = $('<tbody>');
 
-  const categoryIds = await getCategoryIds();
+  categoryData = randomApi();
+  // const categoryIds = await getCategoryIds();
+  // const categoryIds = randomApi;
 
   for (let i = 0; i < 6; i++) {
-    const categoryId = categoryIds[i];
-    const category = categoryData[categoryId];
-    const $th = $('<th>').text(category.title);
+    // const categoryId = categoryIds[i];
+    // const category = categoryData[categoryId];
+    const $th = $('<th>').text(categoryData[i].title);
     $thead.append($th);
   }
-
   for (let i = 0; i < 5; i++) {
     const $tr = $('<tr>');
-    for (let j = 0; j < 6; j++) {
-      const categoryId = categoryIds[j];
-      const category = categoryData[categoryId];
-      const clue = category.clues[i];
+    for (let j =0 ; j < 6; j++) {
       const $td = $('<td>').text('?');
       $td.on('click', handleClick);
       $tr.append($td);
@@ -124,34 +191,46 @@ fillTable()
  * */
 
 function handleClick(evt) {
-  // console.log($(evt.target).parent().index()); 
-  // console.log($(evt.target).index());
-  // console.log(columns);
-  // let columnIndex = $(evt.target).index(); 
-  // let rowIndex = $(evt.target).parent().index();
-  // let clue = columns[columnIndex].clues[rowIndex];
-  // // console.log(clue);
-  // if (clue.showing === 'null') {
-  //   evt.target.innerText = clue.question;
-  //   clue.showing = 'question';
-  // } else if (clue.showing === 'question'){
-  //   evt.target.innerText = clue.answer;
-  //   clue.showing = 'answer';
-  // }
+  let columnIndex = $(evt.target).index(); 
+  let rowIndex = $(evt.target).parent().index();
+  let clue = categoryData[columnIndex].clues[rowIndex];
+  if (clue.showing === null || clue.showing === undefined) {
+    evt.target.innerText = clue.question;
+    clue.showing = 'question';
+  } else if (clue.showing === 'question'){
+    evt.target.innerText = clue.answer;
+    clue.showing = 'answer';
+  }
 }
 
 /** Wipe the current Jeopardy board, show the loading spinner,
  * and update the button used to fetch data.
  */
+let $spinner = $('<div class="lds-dual-ring"></div>');
+let $button = $('<input type="submit" value="Restart"></input>');
+$('body').append($button);
 
-async function showLoadingView() {
-  // let $button = $('<input type="submit" value="Restart"></input>');
-  // $('body').append($button);
-  // $button.on('click', async function(e){
-  //   $('table').remove();
-  //   await fillTable();
-  // });
-};
+function showSpinner() {
+  $('body').append($spinner);
+}
+
+function hideSpinner() {
+  $spinner.remove();
+}
+
+$button.on('click', async function (e) {
+  $('table').remove();
+  showSpinner();
+  setTimeout(hideSpinner, 2000);
+  setTimeout(fillTable, 2000);
+});
+  
+
+
+
+// async function showLoadingView() {
+
+// };
 /** Remove the loading spinner and update the button used to fetch data. */
 
 function hideLoadingView() {
