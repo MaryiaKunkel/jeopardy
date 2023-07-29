@@ -28,21 +28,16 @@ let columns = {};
  */
 let categoryData = {};
 
-// async function getCategoryIds() {
-//   const NUM_CATEGORIES = 6; // You can adjust this value to get more or fewer categories
-//   let categoryIds = [];
-//   const res = await axios.get('http://jservice.io/api/random', { params: { count: 6 } });
-//   for (let i = 0; i < NUM_CATEGORIES; i++){
-//     // const res = await axios.get('http://jservice.io/api/random');
-//     const categoryId = res.data[i].category_id;
-//     if (!categoryData[categoryId]) {
-//       categoryData[categoryId] = await getCategory(categoryId);
-//     }
-//     categoryIds.push(categoryId);
-//   };
-//   console.log(categoryIds);
-//   return categoryIds;
-// }
+async function getCategoryIds() {
+  const res = await axios.get('http://jservice.io/api/categories', { params: { count: 100 } });
+  let arrayOfIds = [];
+  for (let i = 0; i < 6; i++){
+    let randomIndex = Math.floor(Math.random() * 101);
+    arrayOfIds.push(res.data[randomIndex].id);
+  }
+  return arrayOfIds;
+}
+getCategoryIds()
 
 function randomApi() {
   return [
@@ -123,24 +118,28 @@ function randomApi() {
  *   ]
  */
 
-// async function getCategory(catId) {
-//   if (categoryData[catId]) {
-//     return categoryData[catId];
-//   } else {
-//     const res = await axios.get(`http://jservice.io/api/category?id=${catId}`);
-//     const fiveCluesArr = res.data.clues.slice(0, 5);
-//     const category = {
-//       'title': res.data.title,
-//       'clues': fiveCluesArr.map((clue) => ({
-//         'question': clue.question,
-//         'answer': clue.answer,
-//         'showing': null,
-//       })),
-//     };
-//     categoryData[catId] = category;
-//     return category;
-//   }
-// }
+async function populateCategoryData(idArray) {
+  // if (categoryData[catId]) {
+  //   return categoryData[catId];
+  // } else {
+  
+  for (let i = 0; i < 6; i++){
+    console.log(i)
+    const res = await axios.get(`http://jservice.io/api/category?id=${idArray[i]}`);
+      const fiveCluesArr = res.data.clues.slice(0, 5);
+      const category = {
+        'title': res.data.title,
+        'clues': fiveCluesArr.map((clue) => ({
+          'question': clue.question,
+          'answer': clue.answer,
+          'showing': null,
+        })),
+      };
+    categoryData[i] = category;
+  }  
+  console.log(categoryData);
+  // }
+}
 
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
  *
@@ -157,7 +156,9 @@ async function fillTable() {
   const $thead = $('<thead>');
   const $tbody = $('<tbody>');
 
-  categoryData = randomApi();
+  let categoryIds = await getCategoryIds();
+  await populateCategoryData(categoryIds);
+  // categoryData = randomApi();
   // const categoryIds = await getCategoryIds();
   // const categoryIds = randomApi;
 
@@ -208,7 +209,8 @@ function handleClick(evt) {
  */
 let $spinner = $('<div class="lds-dual-ring"></div>');
 let $button = $('<input type="submit" value="Restart"></input>');
-$('body').append($button);
+$('body').append($('<div class="container">'));
+$('.container').append($button);
 
 function showSpinner() {
   $('body').append($spinner);
